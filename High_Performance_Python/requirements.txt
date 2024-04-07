@@ -1,0 +1,4 @@
+memory-profiler==0.61.0
+numexpr==2.8.6
+snakeviz==2.2.0
+py-spy==0.3.14

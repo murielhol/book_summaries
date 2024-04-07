@@ -1,0 +1,70 @@
+Length of x: 1000
+Total elements: 1000000
+Timer unit: 1e-09 s
+
+Total time: 51.1963 s
+File: julia1_lineprofiler.py
+Function: calculate_z_serial_purepython at line 13
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    13                                           @profile
+    14                                           def calculate_z_serial_purepython(maxiter, zs, cs):
+    15                                               """Calculate output list using Julia update rule"""
+    16         1    3964000.0    4e+06      0.0      output = [0] * len(zs)
+    17   1000001  498080000.0    498.1      1.0      for i in range(len(zs)):
+    18   1000000  333906000.0    333.9      0.7          n = 0
+    19   1000000  428803000.0    428.8      0.8          z = zs[i]
+    20   1000000  383166000.0    383.2      0.7          c = cs[i]
+    21  34219980        2e+10    639.1     42.7          while abs(z) < 2 and n < maxiter:
+    22  33219980        1e+10    437.9     28.4              z = z * z + c
+    23  33219980        1e+10    382.9     24.8              n += 1
+    24   1000000  408236000.0    408.2      0.8          output[i] = n
+    25         1          0.0      0.0      0.0      return output
+
+calculate_z_serial_purepython took 99.53795099258423 seconds
+Timer unit: 1e-09 s
+
+Total time: 3.12761 s
+File: julia1_lineprofiler.py
+Function: calc_pure_python at line 28
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    28                                           @profile
+    29                                           def calc_pure_python(draw_output, desired_width, max_iterations):
+    30                                               """Create a list of complex co-ordinates (zs) and complex parameters (cs), build Julia set and display"""
+    31         1       2000.0   2000.0      0.0      x_step = (x2 - x1) / desired_width
+    32         1          0.0      0.0      0.0      y_step = (y1 - y2) / desired_width
+    33         1       1000.0   1000.0      0.0      x = []
+    34         1       1000.0   1000.0      0.0      y = []
+    35         1          0.0      0.0      0.0      ycoord = y2
+    36      1001     537000.0    536.5      0.0      while ycoord > y1:
+    37      1000     742000.0    742.0      0.0          y.append(ycoord)
+    38      1000     470000.0    470.0      0.0          ycoord += y_step
+    39         1       1000.0   1000.0      0.0      xcoord = x1
+    40      1001    1002000.0   1001.0      0.0      while xcoord < x2:
+    41      1000     995000.0    995.0      0.0          x.append(xcoord)
+    42      1000     843000.0    843.0      0.0          xcoord += x_step
+    43                                               # set width and height to the generated pixel counts, rather than the
+    44                                               # pre-rounding desired width and height
+    45                                               # build a list of co-ordinates and the initial condition for each cell.
+    46                                               # Note that our initial condition is a constant and could easily be removed,
+    47                                               # we use it to simulate a real-world scenario with several inputs to our function
+    48         1       2000.0   2000.0      0.0      zs = []
+    49         1       1000.0   1000.0      0.0      cs = []
+    50      1001     575000.0    574.4      0.0      for ycoord in y:
+    51   1001000  610015000.0    609.4     19.5          for xcoord in x:
+    52   1000000 1254977000.0   1255.0     40.1              zs.append(complex(xcoord, ycoord))
+    53   1000000 1257297000.0   1257.3     40.2              cs.append(complex(c_real, c_imag))
+    54                                           
+    55         1     115000.0 115000.0      0.0      print("Length of x:", len(x))
+    56         1      28000.0  28000.0      0.0      print("Total elements:", len(zs))
+    57         1       2000.0   2000.0      0.0      start_time = time.time()
+    58                                               output = calculate_z_serial_purepython(max_iterations, zs, cs)
+    59                                               end_time = time.time()
+    60                                               secs = end_time - start_time
+    61                                               print(calculate_z_serial_purepython.__name__ + " took", secs, "seconds")
+    62                                           
+    63                                               assert sum(output) == 33219980  # this sum is expected for 1000^2 grid with 300 iterations
+
